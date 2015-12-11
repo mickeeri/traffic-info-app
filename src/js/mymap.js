@@ -56,7 +56,7 @@ TrafficReporter.prototype.renderTrafficMessages = function() {
     var copyright = this.response[0];
     var that = this;
 
-    // Chaning format of date with moment.js.
+    // Changing format of date with moment.js.
     messages.forEach(function(message){
         message.createddate = moment(message.createddate).format("YYYY-MM-DD HH:mm");
     });
@@ -73,17 +73,38 @@ TrafficReporter.prototype.renderTrafficMessages = function() {
         return 0;
     });
 
+    var markers = [];
     // Rendering messages in map-markers and list.
     messages.forEach(function (message) {
+
         // Render markers with leaflet.
-        L.marker([message.latitude, message.longitude]).addTo(that.map)
-            .bindPopup("<strong>" + message.title + "</strong> (" + message.createddate + ")<br>" +
-                message.subcategory + "<br>" + message.description);
+        //var marker = L.marker([message.latitude, message.longitude]);
+        //marker._leaflet_id = message.id;
+
+        var marker = L.marker([message.latitude, message.longitude], { title: message.id }).addTo(that.map).bindPopup("<strong>" + message.title +
+            "</strong> (" + message.createddate + ")<br>" + message.subcategory + "<br>" + message.description);
+
+        markers.push(marker);
 
         // Render list
-        $("<li class='card-panel'><strong>"+message.createddate+" "+message.title+"</strong><br>"+message.description+"</li>").appendTo("#messages");
-
+        $("<li class='card-panel'><a href='#' class='message' id='"+message.id+"'>"+message.createddate+" "+message.title+"" +
+            "<br>"+message.description+"</a></li>").appendTo("#messages");
     });
+
+    // Iterates through markers to find the one with same title as <a>-id.
+    // http://jsfiddle.net/abenrob/zkc5m/
+    function messageMarkerPopup(id){
+        markers.forEach(function(marker){
+            if (marker.options.title = id) {
+                marker.openPopup();
+            }
+        });
+    }
+
+    $(".message").click(function(e){
+        messageMarkerPopup($(e.target).attr("id"));
+    });
+
 
     $("<small>"+copyright+"</small>").appendTo("#copyright");
 };
