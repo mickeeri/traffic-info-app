@@ -11,14 +11,14 @@ function init(){
 
 var TrafficReporter = function(){
 
-    this.map = this.createMap();
+    this.map = this.renderMap();
     this.response = this.getAPIResponse();
-    this.renderMarkers();
-    this.renderList();
+    this.renderTrafficMessages();
+    //this.renderList();
 };
 
 
-TrafficReporter.prototype.createMap = function() {
+TrafficReporter.prototype.renderMap = function() {
 
     var map = L.map( 'map', {
         center: [62.0, 14.8],
@@ -42,6 +42,7 @@ TrafficReporter.prototype.getAPIResponse = function() {
     $.getJSON(url, function(data){
 
         $.each(data, function (key, val) {
+
             response.push(val);
         });
     });
@@ -49,23 +50,42 @@ TrafficReporter.prototype.getAPIResponse = function() {
     return response;
 };
 
-TrafficReporter.prototype.renderMarkers = function() {
+TrafficReporter.prototype.renderTrafficMessages = function() {
 
     var messages = this.response[1];
+    var copyright = this.response[0];
     var that = this;
 
-    messages.forEach(function (message) {
-        // http://stackoverflow.com/questions/206384/format-a-microsoft-json-date
-        var date = new Date(parseInt(message.createddate.substr(6)));
-        //date = date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate();
-        date = moment(date).format("HH:mm YYYY-MM-DD");
-
-        console.log(date);
-
-        L.marker([message.latitude, message.longitude]).addTo(that.map)
-            .bindPopup("<strong>" + message.title + "</strong> (" + date + ")<br>" +
-                message.subcategory + "<br>" + message.description);
+    // Chaning format of date with moment.js.
+    messages.forEach(function(message){
+        message.createddate = moment(message.createddate).format("YYYY-MM-DD HH:mm");
     });
+
+    // Sorting by datetime.
+    messages.sort(function (a, b) {
+        if (a.createddate < b.createddate) {
+            return 1;
+        }
+        if (a.createddate > b.createddate) {
+            return -1;
+        }
+        // a must be equal to b
+        return 0;
+    });
+
+    // Rendering messages in map-markers and list.
+    messages.forEach(function (message) {
+        // Render markers with leaflet.
+        L.marker([message.latitude, message.longitude]).addTo(that.map)
+            .bindPopup("<strong>" + message.title + "</strong> (" + message.createddate + ")<br>" +
+                message.subcategory + "<br>" + message.description);
+
+        // Render list
+        $("<li class='card-panel'><strong>"+message.createddate+" "+message.title+"</strong><br>"+message.description+"</li>").appendTo("#messages");
+
+    });
+
+    $("<small>"+copyright+"</small>").appendTo("#copyright");
 };
 
 window.onload = init();

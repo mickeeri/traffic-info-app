@@ -1,5 +1,5 @@
 #map {
-    height: 800px;
+    height: 600px;
     margin: 30px 5%;
 }
 
@@ -19,8 +19,17 @@ main .container {
     padding-top:20px;
 }
 
-.map-div {
+.map-div, .list-div {
     background-color: #fafafa;
     border:solid 1px #d8d8d8;
     /*padding: 40px;*/
+}
+
+.list-div {
+    height: 500px;
+    overflow: auto;
+}
+
+.brand-logo {
+    margin-left:20px;
 }
