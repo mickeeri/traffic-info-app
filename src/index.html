@@ -25,12 +25,20 @@
     <main>
         <div class="container">
             <div class="row">
-                <div class="col s10 push-s1 map-div">
+                <div class="col s8 push-s1 map-div">
                     <div id="map" class="card"></div>
+                </div>
+                <div class="col s2 push-s1 map-div categories">
+                    <h5>Kategorier</h5>
+                    <a href="#" class="waves-effect waves-light btn" id="cat-road">Vägtrafik</a>
+                    <a href="#" class="waves-effect waves-light btn" id="cat-public">Kollektivtrafik</a>
+                    <a href="#" class="waves-effect waves-light btn" id="cat-planed">Planerad störning</a>
+                    <a href="#" class="waves-effect waves-light btn" id="cat-other">Övrigt</a>
                 </div>
             </div>
             <div class="row">
                 <div class="col s10 push-s1 list-div">
+                    <h4>Senaste trafikmeddelanden</h4>
                     <ul id="messages"></ul>
                     <footer id="copyright"></footer>
                 </div>

@@ -1,6 +1,10 @@
 #map {
     height: 600px;
-    margin: 30px 5%;
+    /*margin: 30px 5%;*/
+}
+
+.categories {
+    height:625px;
 }
 
 body {
@@ -14,8 +18,6 @@ main {
 }
 
 main .container {
-    /*background: #ffffff;*/
-    /*padding: 20px 50px;*/
     padding-top:20px;
 }
 
@@ -26,10 +28,82 @@ main .container {
 }
 
 .list-div {
-    height: 500px;
-    overflow: auto;
+    /*height: 500px;*/
+    /*overflow: auto;*/
 }
 
 .brand-logo {
     margin-left:20px;
+}
+
+li {
+    padding:0;
+}
+
+.message {
+    display: block;
+    color: rgba(0,0,0,0.87);
+    border: 1px solid #d8d8d8;
+}
+
+.message p {
+    margin: 5px 0;
+}
+
+.message .category {
+    border: 1px solid black;
+    display: block;
+    width:98px;
+    text-align: center;
+}
+
+.message .date {
+    color: #595959;
+    font-weight:bold;
+}
+
+/*.message:hover {*/
+    /*background-color: #00acc1;*/
+    /*color: antiquewhite;*/
+/*}*/
+
+/*.message {*/
+    /*color: black;*/
+    /*display: block;*/
+    /*padding: 20px;*/
+    /*border: 1px solid #4e342e;*/
+    /*margin-bottom: 10px;*/
+/*}*/
+
+/*.message:hover {*/
+    /*background-color: #00acc1;*/
+    /*color: antiquewhite;*/
+/*}*/
+
+.btn {
+    width:180px;
+    padding: 0;
+    margin-bottom:5px;
+}
+
+.active {
+    background: #951F83;
+}
+
+#copyright {
+    text-align: right;
+}
+
+.leaflet-popup-content {
+
+}
+
+.leaflet-popup-content strong {
+    font-weight:bold;
+}
+
+.date {
+    margin: 5px 0 !important;
+    color: #595959;
+    font-weight:bold;
 }
