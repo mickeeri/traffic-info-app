@@ -11,9 +11,7 @@ function init(){
 
 var TrafficReporter = function(){
 
-    this.response = null;
     var category;
-    //this.map = null;
     var that = this;
     this.response = this.getAPIResponse();
     this.markers = L.layerGroup();
@@ -21,6 +19,7 @@ var TrafficReporter = function(){
 
     $(".btn").click(function(){
 
+        // Makes button change color if active.
         if ($(this).hasClass("active")) {
             category = undefined;
             $(this).removeClass("active");
@@ -30,9 +29,10 @@ var TrafficReporter = function(){
             $(this).addClass("active");
         }
 
-        // Clears layer containing markers.
+        // Clears layer containing markers, then creates new layer.
         that.map.removeLayer(that.markers);
         that.markers = L.layerGroup();
+        // Render content with category.
         that.renderContent(category);
     });
 
@@ -42,33 +42,31 @@ var TrafficReporter = function(){
 
 TrafficReporter.prototype.renderContent = function(category){
 
-
-
     var messages = this.getMessages(category);
     this.renderTrafficMessages(messages);
-
 };
 
 
 TrafficReporter.prototype.getMessages = function(category) {
 
     var messages = [];
-    //var that = this;
 
     if (category !== undefined) {
-
+        // Filtrates messages based on chosen category.
         this.response[1].forEach(function(message) {
             if (message.category === category) {
                 messages.push(message);
             }
         });
     } else {
+        // User has not chosen category. Return all messages.
         messages = this.response[1];
     }
 
     return messages;
 };
 
+// Returns category based on a-tag id.
 TrafficReporter.prototype.getCategory = function(id) {
 
     var category;
@@ -95,7 +93,7 @@ TrafficReporter.prototype.getCategory = function(id) {
     return category;
 };
 
-
+// Rendering map with leaflet and Open street map.
 TrafficReporter.prototype.renderMap = function() {
 
     var map = L.map( 'map', {
@@ -113,6 +111,7 @@ TrafficReporter.prototype.renderMap = function() {
     return map;
 };
 
+// Calling and getting response from API.
 TrafficReporter.prototype.getAPIResponse = function() {
 
     var url = "http://api.sr.se/api/v2/traffic/messages?format=json&pagination=false";
@@ -125,26 +124,26 @@ TrafficReporter.prototype.getAPIResponse = function() {
 
             response.push(val);
         });
+    }).fail(function(){
+        $("<div class='api-error'>Trafikmeddelanden kunde inte hämtas</div>").insertBefore("#map-container");
+        return false;
     });
 
     return response;
 };
 
+// Method in charge of creating marker and list item for each traffic message.
 TrafficReporter.prototype.renderTrafficMessages = function(messages) {
 
     var that = this;
-
-
-
     var copyright = this.response[0];
-
 
     // Changing format of date with moment.js.
     messages.forEach(function(message){
         message.createddate = moment(message.createddate).format("YYYY-MM-DD HH:mm");
     });
 
-    // Sorting by datetime.
+    // Sorting by date and time.
     messages.sort(function (a, b) {
         if (a.createddate < b.createddate) {
             return 1;
@@ -156,13 +155,16 @@ TrafficReporter.prototype.renderTrafficMessages = function(messages) {
         return 0;
     });
 
+    // Clears message div to avoid duplicates after choosing category.
     $("#messages").empty();
 
     // Rendering messages in map-markers and list.
     messages.forEach(function (message) {
 
         var category;
+        var priority;
 
+        // Assigning category based on number.
         switch (message.category){
             case 0:
                 category = "Vägtrafik";
@@ -178,39 +180,71 @@ TrafficReporter.prototype.renderTrafficMessages = function(messages) {
                 break;
         }
 
+        switch (message.priority) {
+            case 1:
+                priority = "Myckel allvarlig händelse";
+                break;
+            case 2:
+                priority = "Stor händelse";
+                break;
+            case 3:
+                priority = "Störning";
+                break;
+            case 4:
+                priority = "Information";
+                break;
+            case 5:
+                priority = "Mindre störning";
+                break;
+        }
 
-        var marker = L.marker([message.latitude, message.longitude], { title: message.id }).addTo(that.markers).bindPopup("<strong>" + message.title +
-            "</strong><br>" + category + " (" + message.subcategory + ")<p class='date'>" + message.createddate + "</p>" + message.description);
+        var iconURL;
+
+        switch (message.priority){
+            case 2:
+                iconURL = "icons/marker-icon-red.png";
+                break;
+            case 3:
+                iconURL = "icons/marker-icon-orange.png";
+                break;
+            default:
+                iconURL = "icons/marker-icon-default.png"
+        }
+
+
+        var customIcon = L.icon({
+            iconUrl: iconURL
+        });
+
+        // Adding marker to markerlayer.
+        var marker = L.marker([message.latitude, message.longitude], { title: message.id, icon: customIcon }).addTo(that.markers).bindPopup(
+            "<strong>"+message.title+"</strong> (" + message.subcategory + ")" +
+            "<p>"+priority+"</p><p class='date'>" + message.createddate + "</p>" + message.description);
 
 
 
-        //markers.push(marker);
+
+
         var listItem = "<p><strong>"+message.subcategory+" - "+message.title+"</strong></p>" +
             "<p class='chip'>"+category+"</p>" +
             "<p class='date'>"+message.createddate+"</p>" +
             "<p>"+message.description+"</p>";
 
-
         // Render list
-        $("<li class='message-li'><a href='#' class='card-panel message hoverable' id='"+message.id+"'>"+listItem+"</a></li>").appendTo("#messages");
+        $("<li class='message-li'><a href='#' class='card-panel message hoverable' id='"+message.id+"'>"+listItem+"</a>" +
+            "</li>").appendTo("#messages");
 
-
-
-
-            //""+message.title+"" + ""+message.title+"" +
-            //"<br>"+message.description+"" +
-            //"</a></li>").appendTo("#messages");
     });
 
     this.markers.addTo(this.map);
 
-    // Iterates through markers to find the one with same title as clicked <a>-id.
+    // Iterates through markers to find the one with same title as clicked <a> id.
     // http://jsfiddle.net/abenrob/zkc5m/
     function messageMarkerPopup(id){
 
         that.map.eachLayer(function(layer){
 
-            if (layer.options.title == id) {
+            if (layer.options !== undefined && layer.options.title == id) {
                 that.map.setView([layer._latlng.lat, layer._latlng.lng], 7);
                 layer.openPopup();
             }
@@ -223,11 +257,6 @@ TrafficReporter.prototype.renderTrafficMessages = function(messages) {
 
     $("#copyright").empty();
     $("<small>"+copyright+"</small>").appendTo("#copyright");
-
-
-
-
-
 };
 
 window.onload = init();

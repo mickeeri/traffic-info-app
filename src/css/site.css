@@ -3,10 +3,6 @@
     /*margin: 30px 5%;*/
 }
 
-.categories {
-    height:625px;
-}
-
 body {
     display: flex;
     min-height: 100vh;
@@ -27,15 +23,29 @@ main .container {
     /*padding: 40px;*/
 }
 
-.list-div {
-    /*height: 500px;*/
-    /*overflow: auto;*/
-}
-
 .brand-logo {
     margin-left:20px;
 }
 
+/*Categories sidebar*/
+.categories {
+    height:625px;
+    min-width:min-content;
+}
+
+.btn {
+    width: 180px;
+    padding: 0;
+    margin-bottom:5px;
+
+}
+
+.active {
+    background: #951F83;
+}
+/*-------------*/
+
+/* Message list */
 li {
     padding:0;
 }
@@ -62,40 +72,14 @@ li {
     font-weight:bold;
 }
 
-/*.message:hover {*/
-    /*background-color: #00acc1;*/
-    /*color: antiquewhite;*/
-/*}*/
-
-/*.message {*/
-    /*color: black;*/
-    /*display: block;*/
-    /*padding: 20px;*/
-    /*border: 1px solid #4e342e;*/
-    /*margin-bottom: 10px;*/
-/*}*/
-
-/*.message:hover {*/
-    /*background-color: #00acc1;*/
-    /*color: antiquewhite;*/
-/*}*/
-
-.btn {
-    width:180px;
-    padding: 0;
-    margin-bottom:5px;
-}
-
-.active {
-    background: #951F83;
-}
-
 #copyright {
     text-align: right;
 }
+/*----------------*/
 
-.leaflet-popup-content {
-
+/* Marker popup */
+.leaflet-popup-content p {
+    margin: 2px 0 0 0;
 }
 
 .leaflet-popup-content strong {
@@ -107,3 +91,17 @@ li {
     color: #595959;
     font-weight:bold;
 }
+/*-------------*/
+
+/* Error message */
+.api-error {
+    display: block;
+    background-color: #EEEEEE;
+    color: red;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-weight:bold;
+    text-align: center;
+    border: 1px solid red;
+}
+/*-------------*/

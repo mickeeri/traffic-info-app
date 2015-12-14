@@ -1,6 +1,6 @@
 # Set the cache-control max-age
 # 1 year
-<FilesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+<FilesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf|woff2|woff)$">
 Header set Cache-Control "max-age=31449600, public"
 </FilesMatch>
 # 2 DAYS
