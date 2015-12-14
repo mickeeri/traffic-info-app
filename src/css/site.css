@@ -91,6 +91,10 @@ li {
     color: #595959;
     font-weight:bold;
 }
+
+.leaflet-marker-icon {
+    /*width: 41px;*/
+}
 /*-------------*/
 
 /* Error message */

@@ -201,11 +201,20 @@ TrafficReporter.prototype.renderTrafficMessages = function(messages) {
         var iconURL;
 
         switch (message.priority){
+            case 1:
+                iconURL = "icons/marker-icon-darkred.png";
+                break;
             case 2:
                 iconURL = "icons/marker-icon-red.png";
                 break;
             case 3:
                 iconURL = "icons/marker-icon-orange.png";
+                break;
+            case 4:
+                iconURL = "icons/marker-icon-default.png";
+                break;
+            case 5:
+                iconURL = "icons/marker-icon-yellow.png";
                 break;
             default:
                 iconURL = "icons/marker-icon-default.png"
