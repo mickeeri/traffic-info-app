@@ -1,4 +1,5 @@
 "use strict";
+
 function init(){
     TrafficReporter = new TrafficReporter();
 }
@@ -20,10 +21,10 @@ var TrafficReporter = function(){
      // If user selects category: set category, clear layers and list and get messages again.
     $(".btn").click(function(){
         that.setCategory(this);
-        resetAPIRequest();
+        reRenderContent();
     });
 
-    var updateInterval = 60000;
+    var updateInterval = 300000;
 
     if (this.storedResponse !== null) {
         /* This code compares time when result of API-request was saved with present time, to make sure
@@ -32,36 +33,24 @@ var TrafficReporter = function(){
         var now = Date.now();
         var elapsed = now - timestamp;
 
-
-        console.log(elapsed);
-
         updateInterval -= elapsed;
-
-        console.log(updateInterval);
-
-        //if (elapsed >= updateInterval) {
-        //    // Clears local storage and render list and markers again.
-        //    console.log("Update timestamp");
-        //    localStorage.clear();
-        //    resetAPIRequest();
-        //}
     }
 
-    this.getResponse();
+    this.renderMessages();
 
     // Makes new request and redraws messages after specified number of minutes.
     setInterval(function () {
         console.log("Update interval");
         localStorage.clear();
-        resetAPIRequest();
+        reRenderContent();
     }, updateInterval);
 
     // Clears list and marker-layer and renders everything again.
-    function resetAPIRequest() {
+    function reRenderContent() {
         $("#messages").empty();
         $("#copyright").empty();
         that.markers.clearLayers();
-        that.getResponse();
+        that.renderMessages();
     }
 };
 
@@ -79,6 +68,7 @@ TrafficReporter.prototype.renderMap = function() {
 
 };
 
+// Called if user has selected category.
 TrafficReporter.prototype.setCategory = function(button) {
 
     var that = this;
@@ -116,19 +106,16 @@ TrafficReporter.prototype.setCategory = function(button) {
     }
 };
 
-
-TrafficReporter.prototype.getResponse = function() {
+// Gets messages and renders in list and as markers.
+TrafficReporter.prototype.renderMessages = function() {
 
     var srAPI = "http://api.sr.se/api/v2/traffic/messages?format=json&pagination=false";
     var that = this;
-    var copyright;
 
     // If no result is stored in local storage make API-request.
     if (!that.storedResponse) {
 
         $.getJSON(srAPI, function(data){
-
-
 
             // Create timestamp to see when object was saved to locale storage.
             data.timestamp = new Date().getTime().toString();
@@ -162,6 +149,7 @@ TrafficReporter.prototype.getResponse = function() {
             messages = filtrateMessages(messages);
         }
 
+        // Renders list item and marker for each message.
         messages.forEach(function(message) {
 
             var category = getCategoryAsString(message);
@@ -174,6 +162,7 @@ TrafficReporter.prototype.getResponse = function() {
 
         that.markers.addTo(that.map);
 
+        // If list item is clicked.
         $(".message").click(function(){
             messageMarkerPopup($(this).attr("id"));
         });
@@ -184,8 +173,9 @@ TrafficReporter.prototype.getResponse = function() {
 
             that.map.eachLayer(function(layer){
 
+                // Zooms in on clicked message location.
                 if (layer.options !== undefined && layer.options.title == id) {
-                    that.map.setView([layer._latlng.lat, layer._latlng.lng], 7);
+                    that.map.setView([layer._latlng.lat, layer._latlng.lng], 10);
                     layer.openPopup();
                 }
             });

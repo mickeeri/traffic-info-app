@@ -11,7 +11,7 @@ På https://www.openstreetmap.org/copyright specificerar OpenStreetMaps att man 
 Sveriges radio talar om att det inte finns några begräsningar på exempelvis antalet anrop, men att de uppskattar att man gör så få anrop som möjligt. De kräver inte registrering.
 
 #### Hur och hur länge cachar du ditt data för att slippa anropa API:erna i onödan?
-Under vissa tider på dygnet inkommer ny trafikinformation varje minut, men jag har beslutat mig för att lagra resultet av ett API-anrop i 10 minuter. 
+Under vissa tider på dygnet inkommer ny trafikinformation varje minut, men jag har beslutat mig för att lagra resultet av ett API-anrop i 5 minuter. 
 
 Hur jag skulle lagra det var ganska knepigt. Först försökte jag få det att cachas, men det fungerade inte. Slutligen beslutade jag mig för att lagra det i local storage. Genom en JavaScript setInterval-funktion uppdateras innehållet. Jag håller även reda på när objektet blev sparat, och har den informationen även om användaren t.ex. laddar om sidan. 
 
@@ -30,4 +30,4 @@ Applikationen har ingen inloggning, inga textfält där en elak användare kan i
 Den största risken är att hämta data från en annan källa. Jag använder jQuery-metoden getJSON för att hämta data. [Här](http://stackoverflow.com/questions/29022794/is-getjson-safe-to-call-on-untrusted-url) diskuteras risker med metoden. Om jag har förstått det rätt och man ska lita på detta filterar den skadlig kod, men riskerna ökar om man använder JSONP - vilket jag inte gör.
 
 #### Hur har du tänkt kring optimeringen i din applikation?
-Jag har placerat css-filer i head-taggen och js-filer längst ner som sig bör. Jag har även en .htaccess-fil där jag ser till att så mycket som möjligt blir cachat. På webbservern tillåter även det mesta komprimering med gzip enligt response-headerns. Jag sparar även resultatet från API-anropet i några minuter. Förutom det använder jag de minifierade versionerna av exempelvis jQuery, samt att några resurser levereras via ett ”Content delivery network”. 
+Jag har placerat css-filer i head-taggen och js-filer längst ner som sig bör. Jag har även en .htaccess-fil där jag ser till att så mycket som möjligt blir cachat. På webbservern tillåter även det mesta komprimering med gzip enligt anropens response-headern. Jag sparar även resultatet från API-anropet i några minuter. Förutom det använder jag de minifierade versionerna av exempelvis jQuery, samt att några resurser levereras via ett ”Content delivery network”. 
