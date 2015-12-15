@@ -221,17 +221,18 @@ TrafficReporter.prototype.renderTrafficMessages = function(messages) {
         }
 
 
-        var customIcon = L.icon({
-            iconUrl: iconURL
+        var CustomIcon = L.Icon.Default.extend({
+           options: {
+               iconUrl: iconURL
+           }
         });
 
-        // Adding marker to markerlayer.
+        var customIcon = new CustomIcon();
+
+        // Adding marker to marker layer.
         var marker = L.marker([message.latitude, message.longitude], { title: message.id, icon: customIcon }).addTo(that.markers).bindPopup(
             "<strong>"+message.title+"</strong> (" + message.subcategory + ")" +
             "<p>"+priority+"</p><p class='date'>" + message.createddate + "</p>" + message.description);
-
-
-
 
 
         var listItem = "<p><strong>"+message.subcategory+" - "+message.title+"</strong></p>" +

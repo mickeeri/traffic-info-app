@@ -9,5 +9,9 @@ Header set Cache-Control "max-age=172800, public, must-revalidate"
 </FilesMatch>
 # 4 HOURS
 <FilesMatch ".(html|htm)$">
-Header set Cache-Control "max-age=14400, must-revalidate"
+Header set Cache-Control "max-age=14400, public"
+</FilesMatch>
+
+<FilesMatch ".(xhr|json)$">
+Header set Cache-Control "max-age=14400, public"
 </FilesMatch>

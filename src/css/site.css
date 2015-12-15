@@ -37,13 +37,16 @@ main .container {
     width: 180px;
     padding: 0;
     margin-bottom:5px;
-
 }
 
 .active {
     background: #951F83;
 }
-/*-------------*/
+
+.active:hover {
+    background: #A9479A;
+}
+    /*-------------*/
 
 /* Message list */
 li {
@@ -93,7 +96,7 @@ li {
 }
 
 .leaflet-marker-icon {
-    /*width: 41px;*/
+
 }
 /*-------------*/
 
