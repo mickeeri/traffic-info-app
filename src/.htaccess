@@ -12,11 +12,3 @@ Header set Cache-Control "max-age=172800, public, must-revalidate"
 <FilesMatch ".(html|htm)$">
 Header set Cache-Control "max-age=14400, public"
 </FilesMatch>
-
-<FilesMatch "\.json$">
-Header set Cache-Control "max-age=14400, public"
-</FilesMatch>
-
-<FilesMatch ".(html|htm)$">
-Header set Cache-Control "max-age=14400, public"
-</FilesMatch>

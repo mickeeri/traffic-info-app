@@ -10,6 +10,8 @@ var TrafficReporter = function(){
     this.map;
     this.category;
     this.markers = new L.layerGroup;
+    this.storageKey = "response";
+    this.storedResponse = localStorage.getItem(this.storageKey);
 
     var that = this;
 
@@ -18,42 +20,44 @@ var TrafficReporter = function(){
      // If user selects category: set category, clear layers and list and get messages again.
     $(".btn").click(function(){
         that.setCategory(this);
-        $("#messages").empty();
-        $("#copyright").empty();
-        that.markers.clearLayers();
-        that.getResponse();
+        resetAPIRequest();
     });
 
-    this.getResponse();
+    var updateInterval = 60000;
 
-    var intervalDelay = 100000;
-
-    if (localStorage.getItem("response") !== null) {
-
-        var timestamp = JSON.parse(localStorage.getItem("response")).timestamp;
-        console.log(timestamp);
+    if (this.storedResponse !== null) {
+        /* This code compares time when result of API-request was saved with present time, to make sure
+        * result is up to date, even if user has refreshed page or closed browser. */
+        var timestamp = JSON.parse(localStorage.getItem(this.storageKey)).timestamp;
         var now = Date.now();
-        console.log(now);
-
         var elapsed = now - timestamp;
+
 
         console.log(elapsed);
 
-        if (elapsed >= intervalDelay) {
-            console.log("updating with timestamp");
-            reload();
-        }
+        updateInterval -= elapsed;
+
+        console.log(updateInterval);
+
+        //if (elapsed >= updateInterval) {
+        //    // Clears local storage and render list and markers again.
+        //    console.log("Update timestamp");
+        //    localStorage.clear();
+        //    resetAPIRequest();
+        //}
     }
 
+    this.getResponse();
 
-    // Makes new request and redraws messages every 10 minutes.
+    // Makes new request and redraws messages after specified number of minutes.
     setInterval(function () {
-        reload();
-    }, intervalDelay);
-
-    function reload() {
-        console.log("updating");
+        console.log("Update interval");
         localStorage.clear();
+        resetAPIRequest();
+    }, updateInterval);
+
+    // Clears list and marker-layer and renders everything again.
+    function resetAPIRequest() {
         $("#messages").empty();
         $("#copyright").empty();
         that.markers.clearLayers();
@@ -118,19 +122,20 @@ TrafficReporter.prototype.getResponse = function() {
     var srAPI = "http://api.sr.se/api/v2/traffic/messages?format=json&pagination=false";
     var that = this;
     var copyright;
-    var storageKey = "response";
 
-    var storedResponse = localStorage.getItem(storageKey);
+    // If no result is stored in local storage make API-request.
+    if (!that.storedResponse) {
 
-    if (true) {
-        $.ajaxSetup({ cache: true });
         $.getJSON(srAPI, function(data){
+
+
 
             // Create timestamp to see when object was saved to locale storage.
             data.timestamp = new Date().getTime().toString();
 
-            // Save response in local storage.
-            localStorage.setItem(storageKey, JSON.stringify(data));
+            // Save response in local storage to avoid unnecessary requests.
+            localStorage.setItem(that.storageKey, JSON.stringify(data));
+
             renderMessages(data);
 
         }).fail(function(){
@@ -138,7 +143,8 @@ TrafficReporter.prototype.getResponse = function() {
             return false;
         });
     } else {
-        renderMessages(JSON.parse(storedResponse));
+        // Else get saved result.
+        renderMessages(JSON.parse(that.storedResponse));
     }
 
     function renderMessages(response) {
@@ -208,7 +214,9 @@ TrafficReporter.prototype.getResponse = function() {
         return messages;
     }
 
+    // Filtrates messages by category.
     function filtrateMessages(messages){
+
         var filtratedMessages = [];
 
         messages.forEach(function(message) {
@@ -237,6 +245,7 @@ TrafficReporter.prototype.getResponse = function() {
 
         var priorityString;
 
+        // Priority based on number.
         switch (priority) {
             case 1:
                 priorityString = "Myckel allvarlig händelse";
@@ -285,6 +294,7 @@ TrafficReporter.prototype.getResponse = function() {
 
         var iconURL;
 
+        // Assigning custom icons based on priority.
         switch (message.priority){
             case 1:
                 iconURL = "icons/marker-icon-darkred.png";
