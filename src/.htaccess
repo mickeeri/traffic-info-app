@@ -2,6 +2,7 @@
 # 1 year
 <FilesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf|woff2|woff)$">
 Header set Cache-Control "max-age=31449600, public"
+Header unset Last-Modified
 </FilesMatch>
 # 2 DAYS
 <FilesMatch ".(xml|txt)$">
@@ -12,6 +13,10 @@ Header set Cache-Control "max-age=172800, public, must-revalidate"
 Header set Cache-Control "max-age=14400, public"
 </FilesMatch>
 
-<FilesMatch ".(xhr|json)$">
+<FilesMatch "\.json$">
+Header set Cache-Control "max-age=14400, public"
+</FilesMatch>
+
+<FilesMatch ".(html|htm)$">
 Header set Cache-Control "max-age=14400, public"
 </FilesMatch>
