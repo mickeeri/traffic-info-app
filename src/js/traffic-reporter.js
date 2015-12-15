@@ -11,11 +11,15 @@ function init(){
 
 var TrafficReporter = function(){
 
+
+
     var category;
     var that = this;
-    this.response = this.getAPIResponse();
+    this.getAPIResponse();
+    this.response;
     this.markers = L.layerGroup();
     this.map = this.renderMap();
+
 
     $(".btn").click(function(){
 
@@ -30,18 +34,33 @@ var TrafficReporter = function(){
         }
 
         // Clears layer containing markers, then creates new layer.
-        that.map.removeLayer(that.markers);
-        that.markers = L.layerGroup();
+
         // Render content with category.
         that.renderContent(category);
+        that.setUpdateInterval(category);
     });
 
     this.renderContent();
+    this.setUpdateInterval();
+
+};
+
+TrafficReporter.prototype.setUpdateInterval = function(category){
+
+    var that = this;
+
+    setInterval(function () {
+        localStorage.clear();
+        that.getAPIResponse();
+        that.renderContent(category);
+    }, 500000);
 
 };
 
 TrafficReporter.prototype.renderContent = function(category){
 
+    this.map.removeLayer(this.markers);
+    this.markers = L.layerGroup();
     var messages = this.getMessages(category);
     this.renderTrafficMessages(messages);
 };
@@ -53,14 +72,14 @@ TrafficReporter.prototype.getMessages = function(category) {
 
     if (category !== undefined) {
         // Filtrates messages based on chosen category.
-        this.response[1].forEach(function(message) {
+        this.response.messages.forEach(function(message) {
             if (message.category === category) {
                 messages.push(message);
             }
         });
     } else {
         // User has not chosen category. Return all messages.
-        messages = this.response[1];
+        messages = this.response.messages;
     }
 
     return messages;
@@ -114,29 +133,37 @@ TrafficReporter.prototype.renderMap = function() {
 // Calling and getting response from API.
 TrafficReporter.prototype.getAPIResponse = function() {
 
+    // http://stackoverflow.com/questions/13853016/jquery-getjson-how-to-avoid-requesting-the-json-file-on-every-refresh-caching
+
     var url = "http://api.sr.se/api/v2/traffic/messages?format=json&pagination=false";
 
-    var response = [];
+    var response = localStorage.getItem("response");
 
-    $.getJSON(url, function(data){
+    var that = this;
 
-        $.each(data, function (key, val) {
+    if (!response) {
 
-            response.push(val);
+        $.getJSON(url, function(data) {
+            response = data;
+            localStorage.setItem("response", JSON.stringify(response));
+
+        }).fail(function(){
+            $("<div class='api-error'>Trafikmeddelanden kunde inte hämtas</div>").insertBefore("#map-container");
+            return false;
         });
-    }).fail(function(){
-        $("<div class='api-error'>Trafikmeddelanden kunde inte hämtas</div>").insertBefore("#map-container");
-        return false;
-    });
 
-    return response;
+    } else {
+        response = JSON.parse(response);
+    }
+
+    this.response = response;
 };
 
 // Method in charge of creating marker and list item for each traffic message.
 TrafficReporter.prototype.renderTrafficMessages = function(messages) {
 
     var that = this;
-    var copyright = this.response[0];
+    var copyright = this.response;
 
     // Changing format of date with moment.js.
     messages.forEach(function(message){
