@@ -31,17 +31,20 @@ var TrafficReporter = function(){
         * result is up to date, even if user has refreshed page or closed browser. */
         var timestamp = JSON.parse(localStorage.getItem(this.storageKey)).timestamp;
         var now = Date.now();
-        var elapsed = now - timestamp;
 
-        updateInterval -= elapsed;
+        updateInterval -= (now - timestamp);
     }
+
+    console.log(updateInterval / 1000 + " sec");
 
     this.renderMessages();
 
     // Makes new request and redraws messages after specified number of minutes.
     setInterval(function () {
-        console.log("Update interval");
-        localStorage.clear();
+        console.log("set interval");
+
+        localStorage.removeItem(that.storageKey);
+        localStorage.removeItem(that.storedResponse);
         reRenderContent();
     }, updateInterval);
 
@@ -74,36 +77,32 @@ TrafficReporter.prototype.setCategory = function(button) {
     var that = this;
 
     // Makes button change color if active.
-    if ($(button).hasClass("active")) {
-        // If user clicks category that is already active, render all categories.
-        that.category = undefined;
-        $(button).removeClass("active");
-    } else {
-        // Get id of clicked a-tag.
-        var id = $(button).attr("id");
+    var id = $(button).attr("id");
 
-        switch (id) {
-            case "cat-road":
-                that.category = 0;
-                break;
-            case "cat-public":
-                that.category = 1;
-                break;
-            case "cat-planed":
-                that.category = 2;
-                break;
-            case "cat-other":
-                that.category = 3;
-                break;
-            default:
-                that.category = undefined;
-                break;
-
-        }
-
-        $(".btn").removeClass("active");
-        $(button).addClass("active");
+    switch (id) {
+        case "cat-road":
+            that.category = 0;
+            break;
+        case "cat-public":
+            that.category = 1;
+            break;
+        case "cat-planed":
+            that.category = 2;
+            break;
+        case "cat-other":
+            that.category = 3;
+            break;
+        case "cat-all":
+            that.category = undefined;
+            break;
+        default:
+            that.category = undefined;
+            break;
     }
+
+    $(".btn").removeClass("active");
+    $(button).addClass("active");
+
 };
 
 // Gets messages and renders in list and as markers.
@@ -113,7 +112,10 @@ TrafficReporter.prototype.renderMessages = function() {
     var that = this;
 
     // If no result is stored in local storage make API-request.
-    if (!that.storedResponse) {
+    if (that.storedResponse === null) {
+
+        console.log("Updating api");
+
 
         $.getJSON(srAPI, function(data){
 
