@@ -96,7 +96,8 @@ li {
 }
 
 .leaflet-marker-icon {
-
+    width: 40px !important;
+    margin-left: -19px !important;
 }
 /*-------------*/
 

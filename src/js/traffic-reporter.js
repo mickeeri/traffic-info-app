@@ -116,7 +116,6 @@ TrafficReporter.prototype.renderMessages = function() {
 
         console.log("Updating api");
 
-
         $.getJSON(srAPI, function(data){
 
             // Create timestamp to see when object was saved to locale storage.
