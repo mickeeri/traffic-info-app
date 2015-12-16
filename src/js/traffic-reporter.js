@@ -33,6 +33,12 @@ var TrafficReporter = function(){
         var now = Date.now();
 
         updateInterval -= (now - timestamp);
+
+        if (updateInterval < 0) {
+            localStorage.removeItem(that.storageKey);
+            localStorage.removeItem(that.storedResponse);
+            updateInterval = 300000;
+        }
     }
 
     console.log(updateInterval / 1000 + " sec");
@@ -41,8 +47,6 @@ var TrafficReporter = function(){
 
     // Makes new request and redraws messages after specified number of minutes.
     setInterval(function () {
-        console.log("set interval");
-
         localStorage.removeItem(that.storageKey);
         localStorage.removeItem(that.storedResponse);
         reRenderContent();
