@@ -32,6 +32,10 @@ Den största risken är att hämta data från en annan källa. Jag använder jQu
 #### Hur har du tänkt kring optimeringen i din applikation?
 Jag har placerat css-filer i head-taggen och js-filer längst ner som sig bör. Jag har även en .htaccess-fil där jag ser till att så mycket som möjligt blir cachat. På webbservern tillåter även det mesta komprimering med gzip enligt anropens response-headern. Jag sparar även resultatet från API-anropet i några minuter. Förutom det använder jag de minifierade versionerna av exempelvis jQuery, samt att några resurser levereras via ett ”Content delivery network”. 
 
-#### Vad är WebSocket? (Komplettering)
-WebSocket är ett protokoll som öppnar upp en tvåvägskommunikation mellan server och klient via en TCP-uppkoppling. Det gör att data kan skickas till klienten så fort den finns tillgänglig, utan att användaren behöver göra någonting. Det har man tidigare löst med så kallad polling. Fördelen med Web Sockets är att det inte kräver den stora mäng HTTP-anrop som polling leder till och därför kan användas vid t.ex. multiplayer-spel i webbläsaren då uppdateringar måste vara omedelbara. [Artikel om WebSocket på Html5Rocks](http://www.html5rocks.com/en/tutorials/websockets/basics/)
+#### Vad är WebSockets? (Komplettering)
+WebSocket är ett protokoll som öppnar upp en tvåvägskommunikation mellan server och klient via en TCP-uppkoppling. Det gör att data kan skickas till klienten så fort den finns tillgänglig, utan att användaren behöver göra någonting. Det har man tidigare löst med så kallad polling. Fördelen med Web Sockets är att det inte kräver den stora mäng HTTP-anrop som polling leder till och därför kan användas vid t.ex. multiplayer-spel i webbläsaren då uppdateringar måste vara omedelbara. 
+
+Det fungerar så att man anävnder ett API med vilket man skapar en ny anslutning. Därefter kan man lägga till olika "event handlers" till denna anslutning som till exempel reagerar vid inkommande meddelanden eller vid fel. 
+
+[Artikel om WebSocket på Html5Rocks](http://www.html5rocks.com/en/tutorials/websockets/basics/)
 
