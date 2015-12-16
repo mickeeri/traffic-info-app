@@ -232,12 +232,12 @@ TrafficReporter.prototype.renderMessages = function() {
             "</li>").appendTo("#messages");
     }
 
-    function getPriorityAsString(priority) {
+    function getPriorityAsString(message) {
 
         var priorityString;
 
         // Priority based on number.
-        switch (priority) {
+        switch (message.priority) {
             case 1:
                 priorityString = "Myckel allvarlig händelse";
                 break;
@@ -314,8 +314,9 @@ TrafficReporter.prototype.renderMessages = function() {
 
         var customIcon = new CustomIcon();
 
-        var marker = L.marker([message.latitude, message.longitude], { title: message.id, icon: customIcon }).addTo(that.markers).bindPopup("<strong>" + message.title +
-            "</strong><br>" + category + " (" + message.subcategory + ")<p class='date'>" + message.createddate + "</p>" + message.description);
+        var marker = L.marker([message.latitude, message.longitude], { title: message.id, icon: customIcon }).addTo(that.markers).bindPopup(
+            "<strong>"+message.title+"</strong> (" + message.subcategory + ")" +
+            "<p>"+priority+"</p><p class='date'>" + message.createddate + "</p>" + message.description);
     }
 };
 
